@@ -1,0 +1,31 @@
+name: Main Workflow
+
+on:
+  push:
+    branches:
+      - 'main'
+      - 'develop'
+
+jobs:
+  build-push-test:
+    name: 'Build and Push to Test ACR'
+    if: github.ref == 'refs/heads/develop'
+    uses: ./.github/workflows/build-push-workflow.yml
+    with:
+      environment: "Test"
+    secrets:
+      login-server: ${{secrets.AZURE_URL}}
+      username: ${{secrets.ACR_USERNAME}}
+      password: ${{ secrets.ACR_PASSWORD }}
+        
+
+  build-push-prod:
+    name: 'Build and Push to Prod ACR'
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/build-push-workflow.yml
+    with:
+      environment: "Production"
+    secrets:
+      login-server: ${{secrets.AZURE_URL}}
+      username: ${{secrets.ACR_USERNAME}}
+      password: ${{ secrets.ACR_PASSWORD }}
